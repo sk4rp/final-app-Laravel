@@ -2,8 +2,6 @@
 
 namespace App\Http\Middleware;
 
-
-use App\Enums\RoleEnum;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

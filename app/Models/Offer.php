@@ -38,9 +38,4 @@ class Offer extends Model
     {
         return $this->hasMany(Click::class);
     }
-
-    public function expenses(): HasMany
-    {
-        return $this->hasMany(Expense::class);
-    }
 }

@@ -2,8 +2,6 @@
 
 namespace App\Enums;
 
-use Exception;
-
 enum RoleEnum: string
 {
     case advertiser = 'advertiser';
