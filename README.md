@@ -7,18 +7,17 @@
 
 1. **Проверка ```.env``` файла**
 
-Здесь должна быть указана ваша БД с правильными кредами:
-
-(в моём случае была база от ```MAMP```)
-
-```
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=final
-DB_USERNAME=root
-DB_PASSWORD=root
-```
+    Здесь должна быть указана ваша БД с правильными кредами:
+    
+    (в моём случае была база от ```MAMP```)
+    ```
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=final
+    DB_USERNAME=root
+    DB_PASSWORD=root
+    ```
 
 2. **Запустить миграции, чтобы у нас были таблицы в БД**
     ```bash
