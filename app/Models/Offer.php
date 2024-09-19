@@ -21,7 +21,6 @@ class Offer extends Model
     ];
 
     protected $casts = [
-        'cost_per_click' => 'decimal',
         'is_active' => 'boolean'
     ];
 

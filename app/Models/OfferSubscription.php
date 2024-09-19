@@ -16,10 +16,6 @@ class OfferSubscription extends Model
         'cost_per_click',
     ];
 
-    protected $casts = [
-        'cost_per_click' => 'decimal'
-    ];
-
     public function webmaster(): BelongsTo
     {
         return $this->belongsTo(User::class, 'webmaster_id');
