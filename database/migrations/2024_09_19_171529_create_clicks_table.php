@@ -7,18 +7,18 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('users', static function (Blueprint $table) {
+        Schema::create('clicks', static function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->string('password');
-            $table->enum('role', ['advertiser', 'webmaster']);
+            $table->foreignId('offer_id')->constrained('offers');
+            $table->foreignId('webmaster_id')->constrained('users');
+            $table->string('client_ip');
+            $table->timestamp('clicked_at');
             $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('clicks');
     }
 };
