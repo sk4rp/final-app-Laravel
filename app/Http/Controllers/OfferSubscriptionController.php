@@ -33,7 +33,7 @@ class OfferSubscriptionController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $this->subscriptionService->createSubscription($request);
-        return redirect()->route('webmaster.subscriptions.index')->with('success', 'Subscription created successfully');
+        return redirect()->route('webmaster.subscriptions.index')->with('success', 'Подписка успешно создана');
     }
 
     public function show(int $subscriptionId): View|Factory|Application

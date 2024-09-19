@@ -2,14 +2,14 @@
 
 @section('content')
     <div class="container">
-        <h2>Управление пользователями</h2>
+        <h2>{{ __('Управление пользователями') }}</h2>
         <table class="table">
             <thead>
             <tr>
-                <th>Имя</th>
-                <th>Электронная почта</th>
-                <th>Роль</th>
-                <th>Действия</th>
+                <th>{{ __('Имя') }}</th>
+                <th>{{ __('Электронная почта') }}></th>
+                <th>{{ __('Роль') }}</th>
+                <th>{{ __('Действия') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -19,11 +19,13 @@
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->role }}</td>
                     <td>
-                        <a href="{{ route('admin.users.edit', $user->id) }}" class="btn btn-primary">Изменить</a>
-                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" style="display:inline;">
+                        <a href="{{ route('admin.users.edit', $user->id) }}"
+                           class="btn btn-primary">{{ __('Изменить') }}</a>
+                        <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST"
+                              style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Удалить</button>
+                            <button type="submit" class="btn btn-danger">{{ __('Удалить') }}</button>
                         </form>
                     </td>
                 </tr>

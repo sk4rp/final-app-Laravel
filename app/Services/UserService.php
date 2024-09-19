@@ -10,16 +10,19 @@ use Illuminate\Http\Request;
 
 class UserService
 {
+    /**
+     * @return Collection|array
+     */
     public function getAllUsers(): Collection|array
     {
         return User::query()->get();
     }
 
-    public function getUserById(int $userId): Model|Collection|Builder|array|null
-    {
-        return User::query()->findOrFail($userId);
-    }
-
+    /**
+     * @param Request $request
+     * @param int $userId
+     * @return Model|Collection|Builder|array|null
+     */
     public function updateUser(Request $request, int $userId): Model|Collection|Builder|array|null
     {
         $user = User::query()->findOrFail($userId);
@@ -28,6 +31,10 @@ class UserService
         return $user;
     }
 
+    /**
+     * @param int $userId
+     * @return void
+     */
     public function deleteUser(int $userId): void
     {
         $user = User::query()->findOrFail($userId);

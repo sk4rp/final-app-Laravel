@@ -2,17 +2,17 @@
 
 @section('content')
     <div class="container">
-        <h2>Панель управления</h2>
+        <h2>{{ __('Панель управления') }}</h2>
         <div class="row">
             <div class="col-md-6">
-                <h3>Общий доход</h3>
+                <h3>{{ __('Общая статистика') }}</h3>
                 <p>{{ $totalExpenses }}</p>
             </div>
             <div class="col-md-6">
-                <h3>Статистика по ссылкам</h3>
-                <p>Выдано ссылок: {{ $totalOffers }}</p>
-                <p>Переходов: {{ $totalClicks }}</p>
-                <p>Отказов: {{ $totalUsers }}</p>
+                <h3>{{ __('Общая статистика') }}</h3>
+                <p>{{ __('Выдано ссылок') }}: {{ $totalOffers }}</p>
+                <p>{{ __('Переходов') }}: {{ $totalClicks }}</p>
+                <p>{{ __('Отказов') }}: {{ $totalUsers }}</p>
             </div>
         </div>
     </div>

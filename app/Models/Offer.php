@@ -24,16 +24,25 @@ class Offer extends Model
         'is_active' => 'boolean'
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function advertiser(): BelongsTo
     {
         return $this->belongsTo(User::class, 'advertiser_id');
     }
 
+    /**
+     * @return HasMany
+     */
     public function subscriptions(): HasMany
     {
         return $this->hasMany(OfferSubscription::class);
     }
 
+    /**
+     * @return HasMany
+     */
     public function clicks(): HasMany
     {
         return $this->hasMany(Click::class);

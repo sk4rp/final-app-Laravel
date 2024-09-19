@@ -2,16 +2,16 @@
 
 @section('content')
     <div class="container">
-        <h2>Управление офферами</h2>
+        <h2>{{ __('Управление офферами') }}</h2>
         <table class="table">
             <thead>
             <tr>
-                <th>Название</th>
-                <th>Стоимость за клик</th>
-                <th>Целевой URL</th>
-                <th>Темы сайта</th>
-                <th>Статус</th>
-                <th>Действия</th>
+                <th>{{ __('Название') }}</th>
+                <th>{{ __('Стоимость за клик') }}</th>
+                <th>{{ __('Целевой URL') }}L</th>
+                <th>{{ __('Темы сайта') }}</th>
+                <th>{{ __('Статус') }}</th>
+                <th>{{ __('Действия') }}</th>
             </tr>
             </thead>
             <tbody>
@@ -21,23 +21,27 @@
                     <td>{{ $offer->cost_per_click }}</td>
                     <td>{{ $offer->target_url }}</td>
                     <td>{{ $offer->site_themes }}</td>
-                    <td>{{ $offer->is_active ? 'Активен' : 'Неактивен' }}</td>
+                    <td>{{ $offer->is_active ? "Активен" : 'Неактивен' }}</td>
                     <td>
-                        <a href="{{ route('admin.offers.edit', $offer->id) }}" class="btn btn-primary">Изменить</a>
-                        <form action="{{ route('admin.offers.destroy', $offer->id) }}" method="POST" style="display:inline;">
+                        <a href="{{ route('admin.offers.edit', $offer->id) }}"
+                           class="btn btn-primary">{{__('Изменить')}}</a>
+                        <form action="{{ route('admin.offers.destroy', $offer->id) }}" method="POST"
+                              style="display:inline;">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-danger">Удалить</button>
+                            <button class="btn btn-danger">{{ __('Удалить') }}</button>
                         </form>
                         @if($offer->is_active)
-                            <form action="{{ route('admin.offers.deactivate', $offer->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('admin.offers.deactivate', $offer->id) }}" method="POST"
+                                  style="display:inline;">
                                 @csrf
-                                <button type="submit" class="btn btn-warning">Деактивировать оффер</button>
+                                <button type="submit" class="btn btn-warning">{{ __('Деактивировать оффер') }}</button>
                             </form>
                         @else
-                            <form action="{{ route('admin.offers.activate', $offer->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('admin.offers.activate', $offer->id) }}" method="POST"
+                                  style="display:inline;">
                                 @csrf
-                                <button type="submit" class="btn btn-success">Активировать оффер</button>
+                                <button type="submit" class="btn btn-success">{{ __('Активировать оффер') }}</button>
                             </form>
                         @endif
                     </td>

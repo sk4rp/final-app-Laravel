@@ -16,11 +16,17 @@ class OfferSubscription extends Model
         'cost_per_click',
     ];
 
+    /**
+     * @return BelongsTo
+     */
     public function webmaster(): BelongsTo
     {
         return $this->belongsTo(User::class, 'webmaster_id');
     }
 
+    /**
+     * @return BelongsTo
+     */
     public function offer(): BelongsTo
     {
         return $this->belongsTo(Offer::class, 'offer_id');

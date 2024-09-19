@@ -15,7 +15,7 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}">SF-AdTech</a>
+        <a class="navbar-brand" href="{{ url('/') }}">{{ __('SF-AdTech') }}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -25,34 +25,37 @@
                 @auth
                     @if(auth()->user()->role === RoleEnum::admin->value)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.dashboard') }}">Статистика</a>
+                            <a class="nav-link" href="{{ route('admin.dashboard') }}">{{ __('Статистика') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.offers.index') }}">Управление офферами</a>
+                            <a class="nav-link"
+                               href="{{ route('admin.offers.index') }}">{{ __('Управление офферами') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.users.index') }}">Управление пользователями</a>
+                            <a class="nav-link"
+                               href="{{ route('admin.users.index') }}">{{ __('Управление пользователями') }}</a>
                         </li>
                     @endif
                     @if(auth()->user()->role === RoleEnum::advertiser->value)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('advertiser.offers.index') }}">Мои офферы</a>
+                            <a class="nav-link" href="{{ route('advertiser.offers.index') }}">{{ __('Мои офферы') }}</a>
                         </li>
                     @endif
                     @if(auth()->user()->role === RoleEnum::webmaster->value)
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('webmaster.subscriptions.index') }}">Мои подписки</a>
+                            <a class="nav-link"
+                               href="{{ route('webmaster.subscriptions.index') }}">{{ __('Мои подписки') }}</a>
                         </li>
                     @endif
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}">Выйти</a>
+                        <a class="nav-link" href="{{ route('logout') }}">{{ __('Выйти') }}</a>
                     </li>
                 @else
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">Войти</a>
+                        <a class="nav-link" href="{{ route('login') }}">{{ __('Войти') }}</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('register') }}">Регистрация</a>
+                        <a class="nav-link" href="{{ route('register') }}">{{ __('Регистрация') }}</a>
                     </li>
                 @endauth
             </ul>
@@ -60,10 +63,10 @@
             @auth
                 <div class="d-flex flex-column ms-auto text-end">
                     <span class="navbar-text">
-                        Вы авторизованы как: {{ auth()->user()->name }}
+                        {{ __('Вы авторизованы как') }}: {{ auth()->user()->name }}
                     </span>
                     <span class="navbar-text">
-                        Ваша роль: {{ ucfirst(auth()->user()->role) }}
+                        {{ __('Ваша роль') }}: {{ ucfirst(auth()->user()->role) }}
                     </span>
                 </div>
             @endauth
@@ -75,7 +78,7 @@
     @yield('content')
 </main>
 <noscript>
-    <p>Для полной функциональности сайта включите JavaScript в вашем браузере</p>
+    <p> {{ __('Для полной функциональности сайта включите JavaScript в вашем браузере') }}</p>
 </noscript>
 @yield('scripts')
 </body>

@@ -2,22 +2,22 @@
 
 @section('content')
     <div class="container">
-        <h1>Офферы</h1>
-        <a href="{{ route('offers.create') }}" class="btn btn-primary">Создать новый оффер</a>
+        <h1>{{ __('Офферы') }}</h1>
+{{--        <a href="{{ route('offers.create') }}" class="btn btn-primary">{{ __('Создать новый оффер') }}</a>--}}
 
         @if($offers->isEmpty())
-            <div class="alert alert-info mt-3">Офферы отсутствуют</div>
+            <div class="alert alert-info mt-3">{{ __('Офферы отсутствуют') }}</div>
         @else
             <table class="table mt-3">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Имя</th>
-                    <th>Стоимость за клик</th>
-                    <th>URL</th>
-                    <th>Темы сайта</th>
-                    <th>Активность</th>
-                    <th>Действия</th>
+                    <th>{{ __('ID') }}</th>
+                    <th>{{ __('Название') }}</th>
+                    <th>{{ __('Стоимость за клик') }}</th>
+                    <th>{{ __(' URL') }}</th>
+                    <th>{{ __('Темы сайта') }}</th>
+                    <th>{{ __('Активность') }}</th>
+                    <th>{{ __('Действия') }}</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,12 +30,12 @@
                         <td>{{ $offer->site_themes }}</td>
                         <td>{{ $offer->is_active ? 'Активен' : 'Неактивен' }}</td>
                         <td>
-                            <a href="{{ route('offers.show', $offer) }}" class="btn btn-info">Посмотреть</a>
-                            <a href="{{ route('offers.edit', $offer) }}" class="btn btn-warning">Редактировать</a>
+                            <a href="{{ route('offers.show', $offer) }}" class="btn btn-info">{{ __('Посмотреть') }}</a>
+                            <a href="{{ route('offers.edit', $offer) }}" class="btn btn-warning">{{ __('Редактировать') }}</a>
                             <form action="{{ route('offers.destroy', $offer) }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
-                                <button class="btn btn-danger" type="submit">Удалить</button>
+                                <button class="btn btn-danger" type="submit">{{ __('Удалить') }}</button>
                             </form>
                         </td>
                     </tr>

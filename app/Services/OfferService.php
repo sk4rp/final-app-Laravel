@@ -11,21 +11,27 @@ use Illuminate\Support\Facades\Auth;
 
 class OfferService
 {
+    /**
+     * @param int $userId
+     * @return Collection|array
+     */
     public function getUserOffers(int $userId): Collection|array
     {
         return Offer::query()->where('advertiser_id', $userId)->get();
     }
 
+    /**
+     * @return Collection|array
+     */
     public function getOffers(): Collection|array
     {
         return Offer::query()->get();
     }
 
-    public function getOfferById(int $offerId): Builder
-    {
-        return Offer::query()->where('id', $offerId);
-    }
-
+    /**
+     * @param Request $request
+     * @return Model|Builder
+     */
     public function createOffer(Request $request): Model|Builder
     {
         $this->validateOffer($request);
@@ -43,6 +49,10 @@ class OfferService
             ->create($validated);
     }
 
+    /**
+     * @param int $offerId
+     * @return void
+     */
     public function activateOffer(int $offerId): void
     {
         Offer::query()
@@ -50,6 +60,10 @@ class OfferService
             ->update(['is_active' => true]);
     }
 
+    /**
+     * @param int $offerId
+     * @return void
+     */
     public function deactivateOffer(int $offerId): void
     {
         Offer::query()
@@ -57,6 +71,11 @@ class OfferService
             ->update(['is_active' => false]);
     }
 
+    /**
+     * @param Request $request
+     * @param Offer $offer
+     * @return Offer
+     */
     public function updateOffer(Request $request, Offer $offer): Offer
     {
         $this->validateOffer($request);
@@ -71,6 +90,10 @@ class OfferService
         return $offer;
     }
 
+    /**
+     * @param Offer $offer
+     * @return void
+     */
     public function deleteOffer(Offer $offer): void
     {
         $offer->expenses()->delete();
@@ -79,6 +102,10 @@ class OfferService
         $offer->delete();
     }
 
+    /**
+     * @param Request $request
+     * @return void
+     */
     private function validateOffer(Request $request): void
     {
         $request->validate([

@@ -33,7 +33,7 @@ class OfferController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $this->offerService->createOffer($request);
-        return redirect()->route('advertiser.offers.index')->with('success', 'Offer created successfully');
+        return redirect()->route('advertiser.offers.index')->with('success', 'Оффер успешно создан');
     }
 
     /**
@@ -52,7 +52,7 @@ class OfferController extends Controller
     {
         $this->authorize('update', $offer);
         $this->offerService->updateOffer($request, $offer);
-        return redirect()->route('advertiser.offers.index')->with('success', 'Offer updated successfully');
+        return redirect()->route('advertiser.offers.index')->with('success', 'Оффер успешно обновлён');
     }
 
     /**
@@ -62,6 +62,6 @@ class OfferController extends Controller
     {
         $this->authorize('delete', $offer);
         $this->offerService->deleteOffer($offer);
-        return redirect()->route('advertiser.offers.index')->with('success', 'Offer deleted successfully');
+        return redirect()->route('advertiser.offers.index')->with('success', 'Оффер успешно удалён');
     }
 }
