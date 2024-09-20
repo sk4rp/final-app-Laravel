@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\OfferCreated;
 use App\Models\Offer;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -17,7 +18,9 @@ class OfferService
      */
     public function getUserOffers(int $userId): Collection|array
     {
-        return Offer::query()->where('advertiser_id', $userId)->get();
+        return Offer::query()
+            ->where('advertiser_id', $userId)
+            ->get();
     }
 
     /**
@@ -25,7 +28,8 @@ class OfferService
      */
     public function getOffers(): Collection|array
     {
-        return Offer::query()->get();
+        return Offer::query()
+            ->get();
     }
 
     /**
@@ -44,9 +48,11 @@ class OfferService
         ]);
 
         $validated['advertiser_id'] = Auth::id();
+        $offer = Offer::query()->create($validated);
 
-        return Offer::query()
-            ->create($validated);
+        event(new OfferCreated($offer));
+
+        return $offer;
     }
 
     /**
@@ -96,7 +102,6 @@ class OfferService
      */
     public function deleteOffer(Offer $offer): void
     {
-        $offer->expenses()->delete();
         $offer->clicks()->delete();
         $offer->subscriptions()->delete();
         $offer->delete();
