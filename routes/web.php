@@ -35,7 +35,6 @@ Route::middleware('auth')->group(function () {
         Route::get('admin/users/{user}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
         Route::put('admin/users/{user}', [AdminController::class, 'updateUser'])->name('admin.users.update');
         Route::delete('admin/users/{user}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
-        Route::get('admin/statistics', [AdminController::class, 'systemStatistics'])->name('admin.statistics');
     });
 
     Route::middleware('role:advertiser')->group(function () {

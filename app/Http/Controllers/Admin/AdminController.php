@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Click;
-use App\Models\Expense;
 use App\Models\Offer;
 use App\Models\User;
 use App\Services\OfferService;
@@ -59,7 +58,6 @@ class AdminController extends Controller
         }
     }
 
-
     public function destroyOffer(Offer $offer): RedirectResponse
     {
         $this->offerService->deleteOffer($offer);
@@ -102,15 +100,5 @@ class AdminController extends Controller
         $this->offerService->activateOffer($offerId);
 
         return redirect()->route('admin.offers.index')->with('success', 'Оффер успешно активирован.');
-    }
-
-    public function systemStatistics(): View
-    {
-        $totalClicks = Click::query()->count();
-        $totalRefusals = Click::query()->where('status', 'refused')->count();
-        $totalRedirects = Click::query()->where('status', 'redirected')->count();
-        $totalIncome = Expense::query()->sum('amount');
-
-        return view('admin.statistics', compact('totalClicks', 'totalRefusals', 'totalRedirects', 'totalIncome'));
     }
 }
