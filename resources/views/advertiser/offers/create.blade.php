@@ -1,6 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                    {{ $error }}
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <div class="container">
         <h2>{{ __('Создать новый оффер') }}</h2>
         <form action="{{ route('advertiser.offers.store') }}" method="POST">

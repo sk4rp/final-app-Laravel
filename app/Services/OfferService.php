@@ -96,7 +96,7 @@ class OfferService
                 ],
             ]);
 
-            $responseBody = json_decode((string) $response->getBody(), true);
+            $responseBody = json_decode((string)$response->getBody(), true);
             Log::info('Оффер создан успешно (broadcasting)', $responseBody);
 
         } catch (RequestException $e) {

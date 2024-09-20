@@ -9,9 +9,12 @@ use App\Models\Offer;
 use App\Models\User;
 use App\Services\OfferService;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class AdminController extends Controller
 {
@@ -44,9 +47,18 @@ class AdminController extends Controller
 
     public function updateOffer(Request $request, Offer $offer): RedirectResponse
     {
-        $this->offerService->updateOffer($request, $offer);
-        return redirect()->route('admin.offers.index')->with('success', 'Оффер успешно обновлён');
+        try {
+            $this->offerService->updateOffer($request, $offer);
+            return redirect()->route('admin.offers.index')->with('success', 'Оффер успешно обновлён');
+        } catch (ValidationException $e) {
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        } catch (QueryException $e) {
+            return redirect()->back()->withErrors(['error' => 'Ошибка обновления оффера: недопустимое значение для стоимости за клик'])->withInput();
+        } catch (Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'Не удалось обновить оффер. Попробуйте снова позже'])->withInput();
+        }
     }
+
 
     public function destroyOffer(Offer $offer): RedirectResponse
     {

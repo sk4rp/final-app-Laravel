@@ -3,8 +3,6 @@
 @section('content')
     <div class="container">
         <h1>{{ __('Офферы') }}</h1>
-{{--        <a href="{{ route('offers.create') }}" class="btn btn-primary">{{ __('Создать новый оффер') }}</a>--}}
-
         @if($offers->isEmpty())
             <div class="alert alert-info mt-3">{{ __('Офферы отсутствуют') }}</div>
         @else
