@@ -27,9 +27,8 @@ class AdminController extends Controller
         $totalOffers = $this->offerService->getOffers()->count();
         $totalUsers = $this->userService->getAllUsers()->count();
         $totalClicks = Click::query()->count();
-        $totalExpenses = Expense::query()->sum('amount');
 
-        return view('admin.dashboard', compact('totalOffers', 'totalUsers', 'totalClicks', 'totalExpenses'));
+        return view('admin.dashboard', compact('totalOffers', 'totalUsers', 'totalClicks'));
     }
 
     public function users(): View
