@@ -39,6 +39,11 @@ class OfferSubscriptionController extends Controller
     public function show(int $subscriptionId): View|Factory|Application
     {
         $subscription = $this->subscriptionService->getSubscriptionById($subscriptionId);
-        return view('webmaster.subscriptions.show', compact('subscription'));
+        $trackingUrl = route('offer.track', [
+            'offer_id' => $subscription->offer_id,
+            'webmaster_id' => $subscription->webmaster_id
+        ]);
+
+        return view('webmaster.subscriptions.show', compact('subscription', 'trackingUrl'));
     }
 }

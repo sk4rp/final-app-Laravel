@@ -36,7 +36,9 @@ class OfferSubscriptionService
     {
         $validated = $this->validateSubscription($request);
 
+        $offer = Offer::query()->findOrFail($validated['offer_id']);
         $validated['webmaster_id'] = Auth::id();
+        $validated['cost_per_click'] = $offer->cost_per_click;
 
         return OfferSubscription::query()->create($validated);
     }

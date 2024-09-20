@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OfferSubscription;
 use App\Services\ClickService;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
 
 class ClickController extends Controller
 {
@@ -19,7 +21,7 @@ class ClickController extends Controller
         $this->middleware('role:webmaster');
     }
 
-    public function index(): Application|Factory|View
+    public function index(): Factory|Application|View|\Illuminate\Contracts\Foundation\Application
     {
         $user = auth()->user();
 
@@ -32,13 +34,23 @@ class ClickController extends Controller
         return view('webmaster.clicks.index', compact('clicks'));
     }
 
-    public function handleRedirect(Request $request, int $offerId): RedirectResponse|Redirector|Application
+    public function track(Request $request): Application|Redirector|\Illuminate\Contracts\Foundation\Application|RedirectResponse
     {
-        try {
-            $redirectUrl = $this->clickService->handleRedirect($offerId, $request);
-            return redirect($redirectUrl);
-        } catch (\Exception $e) {
-            abort(403, $e->getMessage());
+        $offerId = $request->input('offer_id');
+        $webmasterId = $request->input('webmaster_id');
+
+        $subscription = OfferSubscription::query()
+            ->where('offer_id', $offerId)
+            ->where('webmaster_id', $webmasterId)
+            ->first();
+
+        if (!$subscription) {
+            Log::warning("Error with subscription: webmaster_id={$webmasterId}, offer_id={$offerId}");
+            return redirect('/');
         }
+
+        Log::info("Tracking click for offer {$offerId} by webmaster {$webmasterId}");
+
+        return redirect($subscription->offer->target_url);
     }
 }

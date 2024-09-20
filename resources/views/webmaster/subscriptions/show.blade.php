@@ -9,6 +9,8 @@
                 <p class="card-text"><strong>{{ __('Стоимость за клик') }}:</strong> {{ $subscription->cost_per_click }}
                     руб.
                 </p>
+                <p><strong>Ваша ссылка для отправки трафика:</strong> <a
+                        href="{{ $trackingUrl }}">{{ $trackingUrl }}</a></p>
                 <p class="card-text"><strong>{{ __('Дата подписки') }}
                         :</strong> {{ $subscription->created_at->format('d.m.Y') }}</p>
                 <a href="{{ route('webmaster.subscriptions.index') }}" class="btn btn-secondary">{{ __('Назад') }}</a>
