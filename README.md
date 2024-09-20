@@ -19,6 +19,14 @@
     DB_PASSWORD=root
     ```
 
+    Так же, если используем ***Pusher*** - тогда необходимо вставить свои креды здесь:
+    ```
+    PUSHER_APP_ID="1868062"
+    PUSHER_APP_KEY="a6d6cae195ed43c8791f"
+    PUSHER_APP_SECRET="1c779343d084288db883"
+    PUSHER_APP_CLUSTER="eu"
+    ```
+
 2. **Запустить миграции, чтобы у нас были таблицы в БД**
     ```bash
     php artisan migrate
