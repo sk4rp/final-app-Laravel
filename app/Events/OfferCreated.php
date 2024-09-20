@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\Offer;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -11,7 +12,7 @@ class OfferCreated implements ShouldBroadcast
 {
     use Dispatchable, SerializesModels;
 
-    public int $offer;
+    public Offer $offer;
 
     public function __construct($offer)
     {
