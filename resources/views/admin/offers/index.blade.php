@@ -7,7 +7,7 @@
             <thead>
             <tr>
                 <th>{{ __('Название') }}</th>
-                <th>{{ __('Стоимость за клик') }}</th>
+                <th>{{ __('Стоимость за клик (в руб.)') }}</th>
                 <th>{{ __('Целевой URL') }}L</th>
                 <th>{{ __('Темы сайта') }}</th>
                 <th>{{ __('Статус') }}</th>
@@ -18,7 +18,7 @@
             @foreach($offers as $offer)
                 <tr>
                     <td>{{ $offer->name }}</td>
-                    <td>{{ $offer->cost_per_click }}</td>
+                    <td>{{ $offer->cost_per_click }} руб.</td>
                     <td>{{ $offer->target_url }}</td>
                     <td>{{ $offer->site_themes }}</td>
                     <td>{{ $offer->is_active ? "Активен" : 'Неактивен' }}</td>

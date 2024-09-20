@@ -7,6 +7,7 @@
             <div class="card-body">
                 <h5 class="card-title">{{ $subscription->offer->name }}</h5>
                 <p class="card-text"><strong>{{ __('Стоимость за клик') }}:</strong> {{ $subscription->cost_per_click }}
+                    руб.
                 </p>
                 <p class="card-text"><strong>{{ __('Дата подписки') }}
                         :</strong> {{ $subscription->created_at->format('d.m.Y') }}</p>

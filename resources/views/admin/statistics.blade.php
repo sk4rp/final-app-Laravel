@@ -17,7 +17,7 @@
                 <td>{{ $totalClicks }}</td>
                 <td>{{ $totalRefusals }}</td>
                 <td>{{ $totalRedirects }}</td>
-                <td>{{ $totalIncome }}</td>
+                <td>{{ $totalIncome }} руб.</td>
             </tr>
             </tbody>
         </table>

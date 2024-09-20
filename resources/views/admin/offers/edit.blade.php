@@ -13,7 +13,7 @@
             </div>
 
             <div class="mb-3">
-                <label for="cost_per_click" class="form-label">{{ __('Стоимость за клик') }}</label>
+                <label for="cost_per_click" class="form-label">{{ __('Стоимость за клик (в руб.)') }}</label>
                 <input type="number" step="0.01" class="form-control" id="cost_per_click" name="cost_per_click" value="{{ old('cost_per_click', $offer->cost_per_click) }}" required>
             </div>
 

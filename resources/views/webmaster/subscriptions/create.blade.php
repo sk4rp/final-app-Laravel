@@ -14,7 +14,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="cost_per_click">{{ __('Стоимость за клик') }}</label>
+                <label for="cost_per_click">{{ __('Стоимость за клик (в руб.)') }}</label>
                 <input type="number" name="cost_per_click" id="cost_per_click" class="form-control" step="0.01"
                        required>
             </div>

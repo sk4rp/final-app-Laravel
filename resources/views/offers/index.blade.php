@@ -13,7 +13,7 @@
                 <tr>
                     <th>{{ __('ID') }}</th>
                     <th>{{ __('Название') }}</th>
-                    <th>{{ __('Стоимость за клик') }}</th>
+                    <th>{{ __('Стоимость за клик (в руб.)') }}</th>
                     <th>{{ __(' URL') }}</th>
                     <th>{{ __('Темы сайта') }}</th>
                     <th>{{ __('Активность') }}</th>
@@ -25,7 +25,7 @@
                     <tr>
                         <td>{{ $offer->id }}</td>
                         <td>{{ $offer->name }}</td>
-                        <td>{{ $offer->cost_per_click }}</td>
+                        <td>{{ $offer->cost_per_click }} в руб.</td>
                         <td>{{ $offer->target_url }}</td>
                         <td>{{ $offer->site_themes }}</td>
                         <td>{{ $offer->is_active ? 'Активен' : 'Неактивен' }}</td>

@@ -7,7 +7,7 @@
             <thead>
             <tr>
                 <th>{{ __('Оффер') }}</th>
-                <th>{{ __('Стоимость за клик') }}</th>
+                <th>{{ __('Стоимость за клик (в руб.)') }}</th>
                 <th>{{ __('Дата подписки') }}</th>
                 <th>{{ __('Действия') }}</th>
             </tr>
@@ -16,7 +16,7 @@
             @foreach($subscriptions as $subscription)
                 <tr>
                     <td>{{ $subscription->offer->name }}</td>
-                    <td>{{ $subscription->cost_per_click }}</td>
+                    <td>{{ $subscription->cost_per_click }} руб.</td>
                     <td>{{ $subscription->created_at->format('d.m.Y') }}</td>
                     <td>
                         <a href="{{ route('webmaster.subscriptions.show', $subscription->id) }}"
