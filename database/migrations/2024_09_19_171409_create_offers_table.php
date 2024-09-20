@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('advertiser_id')->constrained('users');
             $table->string('name');
-            $table->decimal('cost_per_click');
+            $table->decimal('cost_per_click')->nullable();
             $table->string('target_url');
             $table->text('site_themes');
             $table->boolean('is_active')->default(true);

@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class OfferSubscriptionService
 {
@@ -35,13 +36,14 @@ class OfferSubscriptionService
     public function createSubscription(Request $request): Builder|Model
     {
         $validated = $this->validateSubscription($request);
-
-        $offer = Offer::query()->findOrFail($validated['offer_id']);
         $validated['webmaster_id'] = Auth::id();
-        $validated['cost_per_click'] = $offer->cost_per_click;
+
+        Log::info('Данные для создания подписки:', $validated);
+
 
         return OfferSubscription::query()->create($validated);
     }
+
 
     /**
      * @param int $subscriptionId

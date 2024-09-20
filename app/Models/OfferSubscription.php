@@ -12,7 +12,8 @@ class OfferSubscription extends Model
 
     protected $fillable = [
         'webmaster_id',
-        'offer_id'
+        'offer_id',
+        'cost_per_click',
     ];
 
     /**
