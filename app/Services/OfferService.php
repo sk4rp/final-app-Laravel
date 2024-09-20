@@ -40,6 +40,7 @@ class OfferService
      * @param Request $request
      * @return Model|Builder
      * @throws Exception
+     * @throws GuzzleException
      */
     public function createOffer(Request $request): Model|Builder
     {
