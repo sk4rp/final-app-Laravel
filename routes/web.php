@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
         Route::get('admin/offers', [AdminController::class, 'offers'])->name('admin.offers.index');
+        Route::get('admin/offers/move', [AdminController::class, 'moveDragDrop'])->name('admin.offers.move');
         Route::get('admin/offers/{offer}/edit', [AdminController::class, 'editOffer'])->name('admin.offers.edit');
         Route::put('admin/offers/{offer}', [AdminController::class, 'updateOffer'])->name('admin.offers.update');
         Route::post('admin/offers/{offer}/deactivate', [AdminController::class, 'deactivateOffer'])->name('admin.offers.deactivate');

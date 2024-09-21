@@ -127,6 +127,12 @@ class OfferService
             ->update(['is_active' => false]);
     }
 
+    public function moveOffer(): Collection|array
+    {
+        return Offer::query()
+            ->get();
+    }
+
     /**
      * @param Request $request
      * @param Offer $offer

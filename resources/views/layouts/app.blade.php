@@ -34,6 +34,10 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link"
+                               href="{{ route('admin.offers.move') }}">{{ __('Переключение статуса оффера') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
                                href="{{ route('admin.users.index') }}">{{ __('Управление пользователями') }}</a>
                         </li>
                     @endif

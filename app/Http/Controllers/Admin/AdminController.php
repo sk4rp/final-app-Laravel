@@ -101,4 +101,11 @@ class AdminController extends Controller
 
         return redirect()->route('admin.offers.index')->with('success', 'Оффер успешно активирован.');
     }
+
+    public function moveDragDrop(): View
+    {
+        $offers = $this->offerService->moveOffer();
+        return view('admin.offers.move', compact('offers'));
+    }
+
 }
