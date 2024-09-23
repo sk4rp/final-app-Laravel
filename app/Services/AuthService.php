@@ -24,7 +24,7 @@ class AuthService
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'balance' => 1000,
+            'balance' => 1000.00,
         ]);
     }
 
@@ -39,7 +39,6 @@ class AuthService
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|confirmed',
             'role' => 'required|in:advertiser,webmaster',
-            'balance' => 'required|integer|min:1000',
         ]);
     }
 
