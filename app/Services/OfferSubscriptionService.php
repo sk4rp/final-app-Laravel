@@ -36,10 +36,10 @@ class OfferSubscriptionService
     public function createSubscription(Request $request): Builder|Model
     {
         $validated = $this->validateSubscription($request);
+        $validated['cost_per_click'] = 10;
         $validated['webmaster_id'] = Auth::id();
 
         Log::info('Данные для создания подписки:', $validated);
-
 
         return OfferSubscription::query()->create($validated);
     }
@@ -62,7 +62,6 @@ class OfferSubscriptionService
     {
         return $request->validate([
             'offer_id' => 'required|exists:offers,id',
-            'cost_per_click' => 'required|numeric',
         ]);
     }
 }

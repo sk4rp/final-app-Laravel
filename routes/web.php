@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:webmaster')->group(function () {
+        Route::get('webmaster/offers', [OfferController::class, 'listOffers'])->name('webmaster.offers.index');
         Route::get('webmaster/subscriptions', [OfferSubscriptionController::class, 'index'])->name('webmaster.subscriptions.index');
         Route::get('webmaster/subscriptions/create', [OfferSubscriptionController::class, 'create'])->name('webmaster.subscriptions.create');
         Route::post('webmaster/subscriptions', [OfferSubscriptionController::class, 'store'])->name('webmaster.subscriptions.store');

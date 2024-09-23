@@ -22,10 +22,9 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="cost-per-click">{{ __('Стоимость за клик') }}</label>
-                <input type="number" id="cost-per-click" class="form-control" step="0.01" required>
+                <input type="hidden" id="cost-per-click" value="10">
             </div>
-            <button type="button" id="subscribe-button" class="btn btn-primary">{{ __('Создать') }}</button>
+            <button type="button" id="subscribe-button" class="btn btn-primary">{{ __('Подписаться') }}</button>
         </form>
     </div>
 @endsection

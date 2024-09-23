@@ -49,6 +49,10 @@
                     @if(auth()->user()->role === RoleEnum::webmaster->value)
                         <li class="nav-item">
                             <a class="nav-link"
+                               href="{{ route('webmaster.offers.index') }}">{{ __('Доступные офферы') }}</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
                                href="{{ route('webmaster.subscriptions.index') }}">{{ __('Мои подписки') }}</a>
                         </li>
                     @endif

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Offer;
 use App\Services\OfferService;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -13,6 +12,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class OfferController extends Controller
@@ -34,19 +34,20 @@ class OfferController extends Controller
         return view('advertiser.offers.create');
     }
 
-    /**
-     * @throws GuzzleException
-     */
     public function store(Request $request): RedirectResponse
     {
-        try {
-            $this->offerService->createOffer($request);
-            return redirect()->route('advertiser.offers.index')->with('success', 'Оффер успешно создан');
-        } catch (QueryException $e) {
-            return redirect()->back()->withErrors(['error' => 'Произошла ошибка при создании оффера. Убедитесь, что стоимость за клик не слишком велика.']);
-        } catch (Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Не удалось создать оффер. Попробуйте снова.']);
-        }
+        $validated = $request->validate([
+            'name' => 'required|string',
+            'site_themes' => 'required',
+            'target_url' => 'required|url',
+            'cost_per_click' => 'required',
+        ]);
+
+        $validated['advertiser_id'] = Auth::id();
+
+        Offer::query()->create($validated);
+
+        return redirect()->route('advertiser.offers.index')->with('success', 'Оффер добавлен');
     }
 
     /**
@@ -94,5 +95,14 @@ class OfferController extends Controller
         $this->authorize('delete', $offer);
         $this->offerService->deleteOffer($offer);
         return redirect()->route('advertiser.offers.index')->with('success', 'Оффер успешно удалён');
+    }
+
+    /**
+     * @return Factory|\Illuminate\Foundation\Application|View|Application
+     */
+    public function listOffers(): Factory|\Illuminate\Foundation\Application|View|Application
+    {
+        $offers = Offer::query()->where('is_active', true)->get();
+        return view('webmaster.offers.index', compact('offers'));
     }
 }

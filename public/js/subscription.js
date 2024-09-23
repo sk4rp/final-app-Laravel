@@ -1,4 +1,4 @@
-async function subscribeToOffer(offerId, costPerClick) {
+async function subscribeToOffer(offerId) {
     try {
         const response = await fetch('/webmaster/subscriptions', {
             method: 'POST',
@@ -7,15 +7,14 @@ async function subscribeToOffer(offerId, costPerClick) {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
             },
             body: JSON.stringify({
-                offer_id: offerId,
-                cost_per_click: costPerClick
+                offer_id: offerId
             })
         });
 
         if (response.ok) {
             const data = await response.json();
             console.log('Подписка успешна:', data);
-            alert('Подписка успешно создана!');
+            alert('Подписка успешно создана на оффер с фиксированной стоимостью клика 10 рублей!');
         } else {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Ошибка при подписке');
@@ -28,10 +27,9 @@ async function subscribeToOffer(offerId, costPerClick) {
 
 document.querySelector('#subscribe-button').addEventListener('click', async function () {
     const offerId = document.querySelector('#offer-id').value;
-    const costPerClick = document.querySelector('#cost-per-click').value;
 
     try {
-        await subscribeToOffer(offerId, costPerClick);
+        await subscribeToOffer(offerId);
         console.log('Подписка завершена');
     } catch (error) {
         console.error('Ошибка подписки:', error);
