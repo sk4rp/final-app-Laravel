@@ -10,9 +10,11 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class OfferController extends Controller
@@ -43,7 +45,15 @@ class OfferController extends Controller
             'cost_per_click' => 'required',
         ]);
 
-        $validated['advertiser_id'] = Auth::id();
+        $advertiser = Auth::user();
+
+        $validated['advertiser_id'] = $advertiser->getAuthIdentifier();
+
+        $minTrafficCost = 100.00;
+
+        if ($advertiser->balance < $minTrafficCost) {
+            return redirect()->back()->withErrors(['message' => 'Недостаточно средств для размещения оффера']);
+        }
 
         Offer::query()->create($validated);
 
@@ -104,5 +114,31 @@ class OfferController extends Controller
     {
         $offers = Offer::query()->where('is_active', true)->get();
         return view('webmaster.offers.index', compact('offers'));
+    }
+
+    public function listOffersAdvertiser(): Factory|\Illuminate\Foundation\Application|View|Application
+    {
+        $offers = Offer::query()->where('is_active', true)->get();
+        return view('advertiser.offers.all', compact('offers'));
+    }
+
+    public function subscribe(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'offer_id' => 'required|exists:offers,id',
+        ]);
+
+        $advertiser = Auth::user();
+
+        $offer = Offer::query()->find($request->offer_id);
+
+        if ($advertiser->balance < $offer->cost_per_click) {
+            return redirect()->back()->withErrors(['message' => 'Недостаточно средств для подписки на оффер']);
+        }
+
+        $advertiser->balance -= $offer->cost_per_click;
+        $advertiser->save();
+
+        return redirect()->back()->with('success', 'Вы успешно подписались на оффер');
     }
 }

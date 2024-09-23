@@ -42,6 +42,10 @@
                         </li>
                     @endif
                     @if(auth()->user()->role === RoleEnum::advertiser->value)
+                            <li class="nav-item">
+                                <a class="nav-link"
+                                   href="{{ route('advertiser.offers.all') }}">{{ __('Доступные офферы') }}</a>
+                            </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('advertiser.offers.index') }}">{{ __('Мои офферы') }}</a>
                         </li>
@@ -77,6 +81,12 @@
                     <span class="navbar-text">
                         {{ __('Ваша роль') }}: {{ ucfirst(auth()->user()->role) }}
                     </span>
+                    @if(auth()->user()->role !== RoleEnum::admin->value)
+                        <span class="navbar-text">
+                            {{ __('Ваш баланс') }}: {{ auth()->user()->balance }} {{ __('₽') }}
+                        </span>
+                    @endif
+
                 </div>
             @endauth
         </div>

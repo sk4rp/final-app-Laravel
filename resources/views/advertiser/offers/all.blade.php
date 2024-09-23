@@ -1,16 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach($errors->all() as $error)
-                    {{ $error }}
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <h2>{{ __('Доступные офферы') }}</h2>
     <div id="offers-container">
         @foreach($offers as $offer)

@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:advertiser')->group(function () {
+        Route::get('advertiser/offers/all', [OfferController::class, 'listOffersAdvertiser'])->name('advertiser.offers.all');
         Route::get('advertiser/offers', [OfferController::class, 'index'])->name('advertiser.offers.index');
         Route::get('advertiser/offers/create', [OfferController::class, 'create'])->name('advertiser.offers.create');
         Route::post('advertiser/offers', [OfferController::class, 'store'])->name('advertiser.offers.store');
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:webmaster')->group(function () {
         Route::get('webmaster/offers', [OfferController::class, 'listOffers'])->name('webmaster.offers.index');
+        Route::post('webmaster/offers/subscribe', [OfferController::class, 'subscribe'])->name('webmaster.offers.subscribe');
         Route::get('webmaster/subscriptions', [OfferSubscriptionController::class, 'index'])->name('webmaster.subscriptions.index');
         Route::get('webmaster/subscriptions/create', [OfferSubscriptionController::class, 'create'])->name('webmaster.subscriptions.create');
         Route::post('webmaster/subscriptions', [OfferSubscriptionController::class, 'store'])->name('webmaster.subscriptions.store');

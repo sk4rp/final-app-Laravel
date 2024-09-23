@@ -14,7 +14,7 @@ async function subscribeToOffer(offerId) {
         if (response.ok) {
             const data = await response.json();
             console.log('Подписка успешна:', data);
-            alert('Подписка успешно создана на оффер с фиксированной стоимостью клика 10 рублей!');
+            alert('Подписка успешно создана на оффер');
         } else {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Ошибка при подписке');

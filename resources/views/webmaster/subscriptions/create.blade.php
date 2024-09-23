@@ -22,7 +22,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <input type="hidden" id="cost-per-click" value="10">
+                <input type="hidden" id="cost-per-click" value="{{ $offer->cost_per_click }}">
             </div>
             <button type="button" id="subscribe-button" class="btn btn-primary">{{ __('Подписаться') }}</button>
         </form>
