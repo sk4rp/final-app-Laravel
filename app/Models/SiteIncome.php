@@ -12,4 +12,9 @@ class SiteIncome extends Model
     protected $table = 'site_incomes';
 
     protected $fillable = ['total_income'];
+
+    public function addIncome(float $amount): void
+    {
+        $this->increment('total_income', $amount);
+    }
 }

@@ -25,10 +25,10 @@ class User extends Authenticatable
     ];
 
     /**
-     * @param int $amount
+     * @param float $amount
      * @return void
      */
-    public function updateBalance(int $amount): void
+    public function updateBalance(float $amount): void
     {
         $this->balance += $amount;
         $this->save();

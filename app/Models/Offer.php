@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
 class Offer extends Model
 {
@@ -46,5 +47,13 @@ class Offer extends Model
     public function clicks(): HasMany
     {
         return $this->hasMany(Click::class);
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function webmaster(): HasManyThrough
+    {
+        return $this->hasManyThrough(User::class, OfferSubscription::class, 'offer_id', 'id', 'id', 'webmaster_id');
     }
 }

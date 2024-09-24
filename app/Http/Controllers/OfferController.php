@@ -287,32 +287,26 @@ class OfferController extends Controller
             return response()->json(['error' => 'Оффер не найден'], 404);
         }
 
-        $subscription = $offer->subscriptions()->first();
+        $webmasters = $offer->subscriptions()->with('webmaster')->get();
 
-        if (!$subscription || !$subscription->webmaster) {
-            return response()->json(['error' => 'Веб-мастер не найден'], 404);
+        // Предполагается, что вы работаете с первым веб-мастером
+        if ($webmasters->isEmpty()) {
+            return response()->json(['error' => 'Веб-мастера не найдены'], 404);
         }
 
-        $webmaster = $subscription->webmaster;
+        $webmaster = $webmasters->first()->webmaster;
+
         $advertiser = $offer->advertiser;
         $siteIncome = SiteIncome::query()->first();
 
         $clickCost = $offer->cost_per_click;
-        $webmasterShare = 0.8 * $clickCost; // 80% для веб-мастера
-        $siteShare = 0.2 * $clickCost; // 20% для сайта/админа
+        $webmasterShare = 0.8 * $clickCost;
+        $siteShare = 0.2 * $clickCost;
 
-        // Проверка достаточности средств у рекламодателя
         if ($advertiser->balance >= $clickCost) {
-            $advertiser->balance -= $clickCost;
-            $advertiser->save();
-
-            $webmaster->balance += $webmasterShare;
-            $webmaster->save();
-
-            if ($siteIncome) {
-                $siteIncome->total_income += $siteShare; // Увеличиваем доход сайта
-                $siteIncome->save();
-            }
+            $advertiser->updateBalance(-$clickCost);
+            $webmaster->updateBalance($webmasterShare);
+            $siteIncome?->addIncome($siteShare);
 
             return redirect()->to($offer->target_url);
         }
