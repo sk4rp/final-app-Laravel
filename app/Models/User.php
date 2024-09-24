@@ -23,4 +23,14 @@ class User extends Authenticatable
         'role',
         'balance',
     ];
+
+    /**
+     * @param int $amount
+     * @return void
+     */
+    public function updateBalance(int $amount): void
+    {
+        $this->balance += $amount;
+        $this->save();
+    }
 }

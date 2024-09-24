@@ -21,7 +21,8 @@
                         <div class="offer-item border p-2 mb-2" draggable="true" data-offer-id="{{ $offer->id }}">
                             <strong>{{ $offer->name }}</strong><br>
                             {{ $offer->cost_per_click }} руб.<br>
-                            <a href="{{ $offer->target_url }}" target="_blank">{{ $offer->target_url }}</a>
+                            <a href="{{ route('offer.click', $offer->id) }}"
+                               target="_blank">{{ $offer->target_url }}</a>
                         </div>
                     @endforeach
                 </div>
@@ -35,7 +36,8 @@
                         <div class="offer-item border p-2 mb-2" draggable="true" data-offer-id="{{ $offer->id }}">
                             <strong>{{ $offer->name }}</strong><br>
                             {{ $offer->cost_per_click }} руб.<br>
-                            <a href="{{ $offer->target_url }}" target="_blank">{{ $offer->target_url }}</a>
+                            <a href="{{ route('offer.click', $offer->id) }}"
+                               target="_blank">{{ $offer->target_url }}</a>
                         </div>
                     @endforeach
                 </div>

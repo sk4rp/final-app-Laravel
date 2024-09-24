@@ -22,6 +22,8 @@ Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
     Route::get('track-offer/{offer_id}/{webmaster_id}', [ClickController::class, 'track'])->name('offer.track');
+    Route::get('/offer/{id}/click', [OfferController::class, 'processClick'])->name('offer.click');
+
 
     Route::middleware('role:admin')->group(function () {
         Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');

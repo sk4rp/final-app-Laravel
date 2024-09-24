@@ -11,7 +11,7 @@
                 <label for="toDate">По:</label>
                 <input type="date" id="toDate" value="{{ date('Y-m-d') }}">
 
-                <button onclick="updateStatistics()">{{ __('Обновить') }}</button>
+                <button class="btn btn-primary" onclick="updateStatistics()">{{ __('Обновить') }}</button>
                 <p>{{ __('Выдано ссылок') }}: <span id="totalLinks">{{ $totalLinks }}</span></p>
                 <p>{{ __('Переходов') }}: <span id="totalClicks">{{ $totalClicks }}</span></p>
                 <p>{{ __('Офферов') }}: <span id="totalOffers">{{ $totalOffers }}</span></p>
@@ -26,9 +26,13 @@
             fetch(`/advertiser/statistics?from_date=${fromDate}&to_date=${toDate}`)
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('totalLinks').textContent = data.totalLinks;
-                    document.getElementById('totalClicks').textContent = data.totalClicks;
-                    document.getElementById('totalOffers').textContent = data.totalOffers;
+                    if (data) {
+                        document.getElementById('totalLinks').textContent = data.totalLinks || 0;
+                        document.getElementById('totalClicks').textContent = data.totalClicks || 0;
+                        document.getElementById('totalOffers').textContent = data.totalOffers || 0;
+                    } else {
+                        console.error('No data returned');
+                    }
                 })
                 .catch(error => console.error('Error fetching statistics:', error));
         }

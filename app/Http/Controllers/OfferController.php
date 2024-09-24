@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Click;
 use App\Models\Offer;
+use App\Models\SiteIncome;
 use App\Services\OfferService;
 use App\Services\UserService;
 use Exception;
@@ -189,11 +190,21 @@ class OfferController extends Controller
 
     public function statsAdvertiser(): View
     {
-        $totalLinks = Offer::query()->distinct('target_url')->count('target_url');
-        $totalClicks = Click::query()->count();
-        $totalOffers = Offer::query()->count();
+        $offers = Offer::query()->where('advertiser_id', auth()->id())->get();
 
-        return view('advertiser.dashboard', compact('totalLinks', 'totalClicks', 'totalOffers'));
+        $totalClicksByOffer = $offers->map(function ($offer) {
+            return [
+                'offer_id' => $offer->id,
+                'click_count' => $offer->clicks()->count(),
+                'target_url' => $offer->target_url,
+            ];
+        });
+
+        $totalLinks = $offers->pluck('target_url')->unique()->count();
+        $totalClicks = Click::query()->whereIn('offer_id', $offers->pluck('id'))->count();
+        $totalOffers = $offers->count();
+
+        return view('advertiser.dashboard', compact('totalLinks', 'totalClicks', 'totalOffers', 'totalClicksByOffer'));
     }
 
     /**
@@ -262,5 +273,50 @@ class OfferController extends Controller
         $offer->update(['is_active' => false]);
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * @param int $offerId
+     * @return JsonResponse|RedirectResponse
+     */
+    public function processClick(int $offerId): JsonResponse|RedirectResponse
+    {
+        $offer = Offer::query()->find($offerId);
+
+        if (!$offer) {
+            return response()->json(['error' => 'Оффер не найден'], 404);
+        }
+
+        $subscription = $offer->subscriptions()->first();
+
+        if (!$subscription || !$subscription->webmaster) {
+            return response()->json(['error' => 'Веб-мастер не найден'], 404);
+        }
+
+        $webmaster = $subscription->webmaster;
+        $advertiser = $offer->advertiser;
+        $siteIncome = SiteIncome::query()->first();
+
+        $clickCost = $offer->cost_per_click;
+        $webmasterShare = 0.8 * $clickCost; // 80% для веб-мастера
+        $siteShare = 0.2 * $clickCost; // 20% для сайта/админа
+
+        // Проверка достаточности средств у рекламодателя
+        if ($advertiser->balance >= $clickCost) {
+            $advertiser->balance -= $clickCost;
+            $advertiser->save();
+
+            $webmaster->balance += $webmasterShare;
+            $webmaster->save();
+
+            if ($siteIncome) {
+                $siteIncome->total_income += $siteShare; // Увеличиваем доход сайта
+                $siteIncome->save();
+            }
+
+            return redirect()->to($offer->target_url);
+        }
+
+        return response()->json(['error' => 'Недостаточно средств у рекламодателя'], 400);
     }
 }

@@ -12,7 +12,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             OfferSeeder::class,
             OfferSubscriptionSeeder::class,
-            ClickSeeder::class
+            ClickSeeder::class,
+            SiteIncomeSeeder::class
         ]);
     }
 }
