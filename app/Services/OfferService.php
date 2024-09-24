@@ -57,6 +57,13 @@ class OfferService
             ->get();
     }
 
+    public function moveAdvertiser(): Collection|array
+    {
+        return Offer::query()
+            ->where('advertiser_id', auth()->id())
+            ->get();
+    }
+
     /**
      * @param Request $request
      * @param Offer $offer

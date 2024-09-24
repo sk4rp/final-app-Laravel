@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Click;
 use App\Models\Offer;
 use App\Services\OfferService;
+use App\Services\UserService;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
@@ -14,13 +16,13 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class OfferController extends Controller
 {
     public function __construct(
-        protected readonly OfferService $offerService
+        protected readonly OfferService $offerService,
+        protected readonly UserService  $userService,
     )
     {
     }
@@ -89,10 +91,8 @@ class OfferController extends Controller
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (QueryException $e) {
-            // Обработка ошибок базы данных (например, превышение допустимого значения)
             return redirect()->back()->withErrors(['error' => 'Ошибка обновления оффера: недопустимое значение для стоимости за клик.'])->withInput();
         } catch (Exception $e) {
-            // Общая обработка других исключений
             return redirect()->back()->withErrors(['error' => 'Произошла ошибка при создании оффера. Убедитесь, что стоимость за клик не слишком велика.'])->withInput();
         }
     }
@@ -116,12 +116,19 @@ class OfferController extends Controller
         return view('webmaster.offers.index', compact('offers'));
     }
 
+    /**
+     * @return Factory|\Illuminate\Foundation\Application|View|Application
+     */
     public function listOffersAdvertiser(): Factory|\Illuminate\Foundation\Application|View|Application
     {
         $offers = Offer::query()->where('is_active', true)->get();
         return view('advertiser.offers.all', compact('offers'));
     }
 
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function subscribe(Request $request): RedirectResponse
     {
         $request->validate([
@@ -140,5 +147,120 @@ class OfferController extends Controller
         $advertiser->save();
 
         return redirect()->back()->with('success', 'Вы успешно подписались на оффер');
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function getStatistics(Request $request): JsonResponse
+    {
+        $fromDate = $request->input('from_date');
+        $toDate = $request->input('to_date');
+
+        $clicksQuery = Click::query();
+
+        if ($fromDate && $toDate) {
+            $clicksQuery->whereBetween('clicked_at', [$fromDate, $toDate]);
+        }
+
+        $totalLinks = Offer::query()->distinct('target_url')->count('target_url');
+        $totalClicks = $clicksQuery->count();
+        $totalOffers = Offer::query()->count();
+
+        return response()->json([
+            'totalLinks' => $totalLinks,
+            'totalClicks' => $totalClicks,
+            'totalOffers' => $totalOffers,
+        ]);
+    }
+
+    /**
+     * @return View
+     */
+    public function stats(): View
+    {
+        $totalLinks = Offer::query()->distinct('target_url')->count('target_url');
+        $totalClicks = Click::query()->count();
+        $totalOffers = Offer::query()->count();
+
+        return view('webmaster.dashboard', compact('totalLinks', 'totalClicks', 'totalOffers'));
+    }
+
+    public function statsAdvertiser(): View
+    {
+        $totalLinks = Offer::query()->distinct('target_url')->count('target_url');
+        $totalClicks = Click::query()->count();
+        $totalOffers = Offer::query()->count();
+
+        return view('advertiser.dashboard', compact('totalLinks', 'totalClicks', 'totalOffers'));
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function advertiserStatstoJson(Request $request): JsonResponse
+    {
+        $fromDate = $request->input('from_date');
+        $toDate = $request->input('to_date');
+
+        $clicksQuery = Click::query()
+            ->whereHas('offer', function ($query) {
+                $query->where('advertiser_id', auth()->id());
+            });
+
+        if ($fromDate && $toDate) {
+            $clicksQuery->whereBetween('clicked_at', [$fromDate, $toDate]);
+        }
+
+        $totalLinks = Offer::query()->where('advertiser_id', auth()->id())->distinct('target_url')->count('target_url');
+        $totalClicks = $clicksQuery->count();
+        $totalOffers = Offer::query()->where('advertiser_id', auth()->id())->count();
+
+        return response()->json([
+            'totalLinks' => $totalLinks,
+            'totalClicks' => $totalClicks,
+            'totalOffers' => $totalOffers,
+        ]);
+    }
+
+    /**
+     * @return View
+     */
+    public function moveAdvertiserOffers(): View
+    {
+        $offers = $this->offerService->moveAdvertiser();
+        return view('advertiser.offers.move', compact('offers'));
+    }
+
+    /**
+     * @param Offer $offer
+     * @return JsonResponse
+     */
+    public function activateOffer(Offer $offer): JsonResponse
+    {
+        if ($offer->advertiser_id !== auth()->id()) {
+            abort(403, 'Unauthorized action');
+        }
+
+        $offer->update(['is_active' => true]);
+
+        return response()->json(['success' => true]);
+    }
+
+    /**
+     * @param Offer $offer
+     * @return JsonResponse
+     */
+    public function deactivateOffer(Offer $offer): JsonResponse
+    {
+        if ($offer->advertiser_id !== auth()->id()) {
+            abort(403, 'Unauthorized action');
+        }
+
+        $offer->update(['is_active' => false]);
+
+        return response()->json(['success' => true]);
     }
 }

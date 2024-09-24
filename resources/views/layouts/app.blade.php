@@ -42,15 +42,28 @@
                         </li>
                     @endif
                     @if(auth()->user()->role === RoleEnum::advertiser->value)
-                            <li class="nav-item">
-                                <a class="nav-link"
-                                   href="{{ route('advertiser.offers.all') }}">{{ __('Доступные офферы') }}</a>
-                            </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ route('advertiser.dashboard') }}">{{ __('Статистика') }}
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ route('advertiser.offers.all') }}">{{ __('Доступные офферы') }}</a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('advertiser.offers.index') }}">{{ __('Мои офферы') }}</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('advertiser.offers.move') }}">{{ __('Изменить статус оффера') }}</a>
+                        </li>
                     @endif
                     @if(auth()->user()->role === RoleEnum::webmaster->value)
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ route('webmaster.dashboard') }}">{{ __('Статистика') }}
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link"
                                href="{{ route('webmaster.offers.index') }}">{{ __('Доступные офферы') }}</a>

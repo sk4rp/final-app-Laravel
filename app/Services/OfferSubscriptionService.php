@@ -30,38 +30,11 @@ class OfferSubscriptionService
     }
 
     /**
-     * @param Request $request
-     * @return Builder|Model
-     */
-    public function createSubscription(Request $request): Builder|Model
-    {
-        $validated = $this->validateSubscription($request);
-        $validated['cost_per_click'] = 10;
-        $validated['webmaster_id'] = Auth::id();
-
-        Log::info('Данные для создания подписки:', $validated);
-
-        return OfferSubscription::query()->create($validated);
-    }
-
-
-    /**
      * @param int $subscriptionId
      * @return Builder|array|Collection|Model
      */
     public function getSubscriptionById(int $subscriptionId): Builder|array|Collection|Model
     {
         return OfferSubscription::query()->findOrFail($subscriptionId);
-    }
-
-    /**
-     * @param Request $request
-     * @return array
-     */
-    private function validateSubscription(Request $request): array
-    {
-        return $request->validate([
-            'offer_id' => 'required|exists:offers,id',
-        ]);
     }
 }

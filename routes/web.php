@@ -13,15 +13,15 @@ Route::get('/', static function () {
     return view('layouts.app');
 })->name('home');
 
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [RegisterController::class, 'register']);
+Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('register', [RegisterController::class, 'register']);
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::get('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login']);
+Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/track-offer/{offer_id}/{webmaster_id}', [ClickController::class, 'track'])->name('offer.track');
+    Route::get('track-offer/{offer_id}/{webmaster_id}', [ClickController::class, 'track'])->name('offer.track');
 
     Route::middleware('role:admin')->group(function () {
         Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
@@ -39,9 +39,14 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:advertiser')->group(function () {
+        Route::get('advertiser/dashboard', [OfferController::class, 'statsAdvertiser'])->name('advertiser.dashboard');
+        Route::get('advertiser/statistics', [OfferController::class, 'advertiserStatstoJson']);
         Route::get('advertiser/offers/all', [OfferController::class, 'listOffersAdvertiser'])->name('advertiser.offers.all');
         Route::get('advertiser/offers', [OfferController::class, 'index'])->name('advertiser.offers.index');
         Route::get('advertiser/offers/create', [OfferController::class, 'create'])->name('advertiser.offers.create');
+        Route::get('advertiser/offers/move', [OfferController::class, 'moveAdvertiserOffers'])->name('advertiser.offers.move');
+        Route::post('advertiser/offers/{offer}/activate', [OfferController::class, 'activateOffer']);
+        Route::post('advertiser/offers/{offer}/deactivate', [OfferController::class, 'deactivateOffer']);
         Route::post('advertiser/offers', [OfferController::class, 'store'])->name('advertiser.offers.store');
         Route::get('advertiser/offers/{offer}/edit', [OfferController::class, 'edit'])->name('advertiser.offers.edit');
         Route::put('advertiser/offers/{offer}', [OfferController::class, 'update'])->name('advertiser.offers.update');
@@ -49,6 +54,8 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::middleware('role:webmaster')->group(function () {
+        Route::get('webmaster/dashboard', [OfferController::class, 'stats'])->name('webmaster.dashboard');
+        Route::get('webmaster/statistics', [OfferController::class, 'getStatistics']);
         Route::get('webmaster/offers', [OfferController::class, 'listOffers'])->name('webmaster.offers.index');
         Route::post('webmaster/offers/subscribe', [OfferController::class, 'subscribe'])->name('webmaster.offers.subscribe');
         Route::get('webmaster/subscriptions', [OfferSubscriptionController::class, 'index'])->name('webmaster.subscriptions.index');

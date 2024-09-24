@@ -22,7 +22,7 @@
             <div class="form-group">
                 <label for="cost_per_click">{{ __('Стоимость за клик (в руб.)') }}</label>
                 <input type="number" name="cost_per_click" id="cost_per_click" class="form-control"
-                       value="{{ $offer->cost_per_click . 'руб'}}" step="0.01" required>
+                       value="{{ $offer->cost_per_click . 'руб'}}" min="1" required>
             </div>
             <div class="form-group">
                 <label for="target_url">{{ __('Целевой URL') }}</label>
