@@ -279,7 +279,7 @@ class OfferController extends Controller
      * @param int $offerId
      * @return JsonResponse|RedirectResponse
      */
-    public function processClick(int $offerId): JsonResponse|RedirectResponse
+    public function processClick(int $offerId): JsonResponse|RedirectResponse // TODO: надо доделать
     {
         $offer = Offer::query()->find($offerId);
 

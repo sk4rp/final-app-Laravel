@@ -17,8 +17,8 @@
             <div class="offer-item" data-offer-id="{{ $offer->id }}">
                 <strong>{{ $offer->name }}</strong><br>
                 {{ __('Стоимость клика:') }} {{ $offer->cost_per_click }} руб.<br>
-                <a href="{{ route('offer.click', $offer->id) }}"
-                   target="_blank">{{ $offer->target_url }}</a>
+                <a href="{{ $offer->target_url }}"
+                   target="_blank"> {{ __('Ссылка на оффер') }}</a>
             </div>
         @endforeach
     </div>

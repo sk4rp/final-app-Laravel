@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -38,6 +39,11 @@ class UserService
     public function deleteUser(int $userId): void
     {
         $user = User::query()->findOrFail($userId);
+
+        if ($user->role === RoleEnum::admin->value) {
+            return;
+        }
+
         $user->delete();
     }
 }
