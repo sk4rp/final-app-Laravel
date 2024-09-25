@@ -27,12 +27,12 @@ class BalanceController extends Controller
     public function balanceStore(Request $request): RedirectResponse
     {
         $request->validate([
-            'amount' => 'required',
+            'balance' => 'required|numeric|min:1|max:500000',
         ]);
 
         $advertiser = Auth::user();
 
-        $advertiser->balance += $request->input('amount');
+        $advertiser->balance += $request->input('balance');
         $advertiser->save();
 
         return redirect()->route('advertiser.balance')->with('success', __('Баланс успешно пополнен'));

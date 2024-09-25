@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\RoleEnum;
+use App\Models\Click;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -44,6 +45,7 @@ class UserService
             return;
         }
 
+        Click::query()->where('webmaster_id', $userId)->delete();
         $user->delete();
     }
 }
