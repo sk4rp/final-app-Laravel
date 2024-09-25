@@ -14,7 +14,7 @@
     </div>
     <script>
         function updateStatistics() {
-            fetch('/admin/dashboard')
+            fetch('/admin/statistics')
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('totalOffers').textContent = data.totalOffers;
@@ -24,7 +24,7 @@
                 .catch(error => console.error('Error fetching statistics:', error));
         }
 
-        setInterval(updateStatistics, 1000);
+        setInterval(updateStatistics, 5000);
         updateStatistics();
     </script>
 @endsection

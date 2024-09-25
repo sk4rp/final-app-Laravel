@@ -6,12 +6,6 @@
         <div class="row">
             <div class="col-md-6">
                 <h3>{{ __('Общая статистика') }}</h3>
-                <label for="fromDate">С:</label>
-                <input type="date" id="fromDate" value="{{ date('Y-m-d') }}">
-                <label for="toDate">По:</label>
-                <input type="date" id="toDate" value="{{ date('Y-m-d') }}">
-
-                <button onclick="updateStatistics()">Обновить</button>
                 <p>{{ __('Выдано ссылок') }}: <span id="totalLinks">{{ $totalLinks }}</span></p>
                 <p>{{ __('Переходов') }}: <span id="totalClicks">{{ $totalClicks }}</span></p>
                 <p>{{ __('Офферов') }}: <span id="totalOffers">{{ $totalOffers }}</span></p>
@@ -19,16 +13,8 @@
         </div>
     </div>
     <script>
-        function getCurrentDate() {
-            const today = new Date();
-            return today.toISOString().split('T')[0];
-        }
-
         function updateStatistics() {
-            const fromDate = document.getElementById('fromDate').value;
-            const toDate = document.getElementById('toDate').value;
-
-            fetch(`/webmaster/statistics?from_date=${fromDate}&to_date=${toDate}`)
+            fetch(`/webmaster/statistics`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('totalLinks').textContent = data.totalLinks;

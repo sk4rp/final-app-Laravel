@@ -21,7 +21,7 @@ class UserFactory extends Factory
             'email' => $this->faker->unique()->safeEmail,
             'password' => $role === RoleEnum::admin->value ? Hash::make('admin_password') : Hash::make('user_password'),
             'role' => $this->faker->randomElement(['advertiser', 'webmaster', 'admin']),
-            'balance' => $this->faker->randomFloat(100, 0, 10000)
+            'balance' => $role === RoleEnum::advertiser->value ? 0 : $this->faker->randomFloat(100, 0, 10000)
         ];
     }
 }

@@ -11,6 +11,7 @@ use App\Services\UserService;
 use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\QueryException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -31,6 +32,19 @@ class AdminController extends Controller
         $totalClicks = Click::query()->count();
 
         return view('admin.dashboard', compact('totalOffers', 'totalUsers', 'totalClicks'));
+    }
+
+    public function statisticToJson(): JsonResponse
+    {
+        $totalOffers = $this->offerService->getOffers()->count();
+        $totalUsers = $this->userService->getAllUsers()->count();
+        $totalClicks = Click::query()->count();
+
+        return response()->json([
+            'totalOffers' => $totalOffers,
+            'totalUsers' => $totalUsers,
+            'totalClicks' => $totalClicks,
+        ]);
     }
 
     public function users(): View

@@ -76,9 +76,6 @@ class OfferSubscriptionController extends Controller
                 'cost_per_click' => $offer->cost_per_click,
             ]);
 
-            $user->balance -= $offer->cost_per_click;
-            $user->save();
-
             DB::commit();
 
             return response()->json(['success' => true, 'subscription' => $subscription]);

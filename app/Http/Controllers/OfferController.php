@@ -7,6 +7,7 @@ use App\Models\Offer;
 use App\Models\SiteIncome;
 use App\Services\OfferService;
 use App\Services\UserService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Foundation\Application;
@@ -136,44 +137,13 @@ class OfferController extends Controller
         return view('advertiser.offers.all', compact('offers'));
     }
 
-    /**
-     * @param Request $request
-     * @return RedirectResponse
-     */
-    public function subscribe(Request $request): RedirectResponse
+    public function getStatistics(): JsonResponse
     {
-        $request->validate([
-            'offer_id' => 'required|exists:offers,id',
-        ]);
+        $today = now()->format('Y-m-d');
+        $startOfDay = "{$today} 00:00:00";
+        $endOfDay = "{$today} 23:59:59";
 
-        $advertiser = Auth::user();
-
-        $offer = Offer::query()->find($request->offer_id);
-
-        if ($advertiser->balance < $offer->cost_per_click) {
-            return redirect()->back()->withErrors(['message' => 'Недостаточно средств для подписки на оффер']);
-        }
-
-        $advertiser->balance -= $offer->cost_per_click;
-        $advertiser->save();
-
-        return redirect()->back()->with('success', 'Вы успешно подписались на оффер');
-    }
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function getStatistics(Request $request): JsonResponse
-    {
-        $fromDate = $request->input('from_date');
-        $toDate = $request->input('to_date');
-
-        $clicksQuery = Click::query();
-
-        if ($fromDate && $toDate) {
-            $clicksQuery->whereBetween('clicked_at', [$fromDate, $toDate]);
-        }
+        $clicksQuery = Click::query()->whereBetween('clicked_at', [$startOfDay, $endOfDay]);
 
         $totalLinks = Offer::query()->distinct('target_url')->count('target_url');
         $totalClicks = $clicksQuery->count();
@@ -185,6 +155,7 @@ class OfferController extends Controller
             'totalOffers' => $totalOffers,
         ]);
     }
+
 
     /**
      * @return View
@@ -198,43 +169,53 @@ class OfferController extends Controller
         return view('webmaster.dashboard', compact('totalLinks', 'totalClicks', 'totalOffers'));
     }
 
+    /**
+     * @return View
+     */
     public function statsAdvertiser(): View
     {
         $advertiser = auth()->user();
         $offers = $advertiser->offers;
 
         $totalClicks = Click::query()->whereIn('offer_id', $offers->pluck('id'))->count();
+
+        $totalLinks = $offers->pluck('target_url')->unique()->count();
+
+        $totalOffers = $offers->count();
+
+        $clickDates = Click::query()
+            ->whereIn('offer_id', $offers->pluck('id'))
+            ->pluck('clicked_at')
+            ->map(function ($date) {
+                return Carbon::createFromTimestamp($date)->toDateTimeString();
+            })
+            ->unique();
+
+        return view('advertiser.dashboard', compact('totalClicks', 'totalLinks', 'totalOffers', 'clickDates'));
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function advertiserStatstoJson(): JsonResponse
+    {
+        $advertiser = auth()->user();
+        $offers = $advertiser->offers;
+
+        $clicksQuery = Click::query()->whereIn('offer_id', $offers->pluck('id'));
+        $clicks = $clicksQuery->get();
+        $totalClicks = $clicks->count();
+
+        $clickDates = $clicks->pluck('clicked_at')->map(function ($date) {
+            return Carbon::createFromTimestamp($date)->toDateTimeString();
+        })->unique();
+
         $totalLinks = $offers->pluck('target_url')->unique()->count();
         $totalOffers = $offers->count();
 
-        return view('advertiser.dashboard', compact('totalClicks', 'totalLinks', 'totalOffers'));
-    }
-
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function advertiserStatstoJson(Request $request): JsonResponse
-    {
-        $fromDate = $request->input('from_date');
-        $toDate = $request->input('to_date');
-
-        $clicksQuery = Click::query()
-            ->whereHas('offer', function ($query) {
-                $query->where('advertiser_id', auth()->id());
-            });
-
-        if ($fromDate && $toDate) {
-            $clicksQuery->whereBetween('clicked_at', [$fromDate, $toDate]);
-        }
-
-        $totalLinks = Offer::query()->where('advertiser_id', auth()->id())->distinct('target_url')->count('target_url');
-        $totalClicks = $clicksQuery->count();
-        $totalOffers = Offer::query()->where('advertiser_id', auth()->id())->count();
-
         return response()->json([
             'totalLinks' => $totalLinks,
+            'clickDates' => $clickDates,
             'totalClicks' => $totalClicks,
             'totalOffers' => $totalOffers,
         ]);

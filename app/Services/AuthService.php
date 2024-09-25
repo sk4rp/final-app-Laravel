@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\RoleEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -24,7 +25,7 @@ class AuthService
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'balance' => 1000.00,
+            'balance' => $request->role === RoleEnum::advertiser->value ? 0 : 1000.00,
         ]);
     }
 

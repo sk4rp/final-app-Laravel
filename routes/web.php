@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:admin')->group(function () {
         Route::get('admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::get('admin/statistics', [AdminController::class, 'statisticToJson']);
         Route::get('admin/offers', [AdminController::class, 'offers'])->name('admin.offers.index');
         Route::get('admin/offers/move', [AdminController::class, 'moveDragDrop'])->name('admin.offers.move');
         Route::get('admin/offers/{offer}/edit', [AdminController::class, 'editOffer'])->name('admin.offers.edit');
@@ -59,7 +60,6 @@ Route::middleware('auth')->group(function () {
         Route::get('webmaster/dashboard', [OfferController::class, 'stats'])->name('webmaster.dashboard');
         Route::get('webmaster/statistics', [OfferController::class, 'getStatistics']);
         Route::get('webmaster/offers', [OfferController::class, 'listOffers'])->name('webmaster.offers.index');
-        Route::post('webmaster/offers/subscribe', [OfferController::class, 'subscribe'])->name('webmaster.offers.subscribe');
         Route::get('webmaster/subscriptions', [OfferSubscriptionController::class, 'index'])->name('webmaster.subscriptions.index');
         Route::get('webmaster/subscriptions/create', [OfferSubscriptionController::class, 'create'])->name('webmaster.subscriptions.create');
         Route::post('webmaster/subscriptions', [OfferSubscriptionController::class, 'store'])->name('webmaster.subscriptions.store');
