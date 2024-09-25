@@ -47,10 +47,10 @@
                                href="{{ route('advertiser.dashboard') }}">{{ __('Статистика') }}
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link"
-                               href="{{ route('advertiser.offers.all') }}">{{ __('Доступные офферы') }}</a>
-                        </li>
+{{--                        <li class="nav-item">--}}
+{{--                            <a class="nav-link"--}}
+{{--                               href="{{ route('advertiser.offers.all') }}">{{ __('Доступные офферы') }}</a>--}}
+{{--                        </li>--}}
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('advertiser.offers.index') }}">{{ __('Мои офферы') }}</a>
                         </li>
