@@ -200,22 +200,16 @@ class OfferController extends Controller
 
     public function statsAdvertiser(): View
     {
-        $offers = Offer::query()->where('advertiser_id', auth()->id())->get();
+        $advertiser = auth()->user();
+        $offers = $advertiser->offers;
 
-        $totalClicksByOffer = $offers->map(function ($offer) {
-            return [
-                'offer_id' => $offer->id,
-                'click_count' => $offer->clicks()->count(),
-                'target_url' => $offer->target_url,
-            ];
-        });
-
-        $totalLinks = $offers->pluck('target_url')->unique()->count();
         $totalClicks = Click::query()->whereIn('offer_id', $offers->pluck('id'))->count();
+        $totalLinks = $offers->pluck('target_url')->unique()->count();
         $totalOffers = $offers->count();
 
-        return view('advertiser.dashboard', compact('totalLinks', 'totalClicks', 'totalOffers', 'totalClicksByOffer'));
+        return view('advertiser.dashboard', compact('totalClicks', 'totalLinks', 'totalOffers'));
     }
+
 
     /**
      * @param Request $request

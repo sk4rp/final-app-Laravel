@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -23,6 +24,11 @@ class User extends Authenticatable
         'role',
         'balance',
     ];
+
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class, 'advertiser_id');
+    }
 
     /**
      * @param float $amount
