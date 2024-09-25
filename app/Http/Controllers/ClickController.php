@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RoleEnum;
 use App\Models\Click;
 use App\Models\Offer;
+use App\Models\SiteIncome;
 use App\Models\User;
 use App\Services\ClickService;
 use Illuminate\Contracts\View\Factory;
@@ -56,10 +58,23 @@ class ClickController extends Controller
         $webmaster->save();
 
         $advertiser = $offer->advertiser;
-        $advertiser->balance -= $clickPrice;
+        $advertiser->balance -= $clickPrice; // Списание у рекламодателя
         $advertiser->save();
+
+        $adminShare = $clickPrice * 0.2; // 20% администратору
+        $admins = User::query()->where('role', RoleEnum::admin->value)->get();
+
+        foreach ($admins as $admin) {
+            $admin->balance += $adminShare;
+            $admin->save();
+        }
+
+        $siteIncomes = SiteIncome::query()->get();
+        foreach ($siteIncomes as $siteIncome) {
+            $siteIncome->total_income += $adminShare;
+            $siteIncome->save();
+        }
 
         return redirect($offer->target_url);
     }
-
 }

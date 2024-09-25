@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\BalanceController;
 use App\Http\Controllers\ClickController;
 use App\Http\Controllers\OfferController;
 use App\Http\Controllers\OfferSubscriptionController;
@@ -23,6 +24,8 @@ Route::get('logout', [LoginController::class, 'logout'])->name('logout');
 Route::middleware('auth')->group(function () {
     Route::get('track-offer/{offer_id}/{webmaster_id}', [ClickController::class, 'track'])->name('offer.track');
     Route::get('/offer/{id}/click', [OfferController::class, 'processClick'])->name('offer.click');
+    Route::get('user/balance', [BalanceController::class, 'getBalance'])->name('user.balance');
+
 
 
     Route::middleware('role:admin')->group(function () {
@@ -43,6 +46,9 @@ Route::middleware('auth')->group(function () {
 
     Route::middleware('role:advertiser')->group(function () {
         Route::get('advertiser/dashboard', [OfferController::class, 'statsAdvertiser'])->name('advertiser.dashboard');
+        Route::get('advertiser/balance', [BalanceController::class, 'balance'])->name('advertiser.balance');
+        Route::post('advertiser/balance', [BalanceController::class, 'balanceStore']);
+
         Route::get('advertiser/statistics', [OfferController::class, 'advertiserStatstoJson']);
         Route::get('advertiser/offers/all', [OfferController::class, 'listOffersAdvertiser'])->name('advertiser.offers.all');
         Route::get('advertiser/offers', [OfferController::class, 'index'])->name('advertiser.offers.index');

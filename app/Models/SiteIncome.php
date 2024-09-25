@@ -15,6 +15,7 @@ class SiteIncome extends Model
 
     public function addIncome(float $amount): void
     {
-        $this->increment('total_income', $amount);
+        $this->total_income += $amount;
+        $this->save();
     }
 }

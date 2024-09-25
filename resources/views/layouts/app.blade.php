@@ -47,10 +47,11 @@
                                href="{{ route('advertiser.dashboard') }}">{{ __('Статистика') }}
                             </a>
                         </li>
-{{--                        <li class="nav-item">--}}
-{{--                            <a class="nav-link"--}}
-{{--                               href="{{ route('advertiser.offers.all') }}">{{ __('Доступные офферы') }}</a>--}}
-{{--                        </li>--}}
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               href="{{ route('advertiser.balance') }}">{{ __('Пополнение баланса') }}
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('advertiser.offers.index') }}">{{ __('Мои офферы') }}</a>
                         </li>
@@ -94,12 +95,11 @@
                     <span class="navbar-text">
                         {{ __('Ваша роль') }}: {{ ucfirst(auth()->user()->role) }}
                     </span>
-                    @if(auth()->user()->role !== RoleEnum::admin->value)
-                        <span class="navbar-text">
+                    @if(auth()->user())
+                        <span class="navbar-text" id="user-balance">
                             {{ __('Ваш баланс') }}: {{ auth()->user()->balance }} {{ __('₽') }}
                         </span>
                     @endif
-
                 </div>
             @endauth
         </div>
@@ -112,6 +112,28 @@
 <noscript>
     <p> {{ __('Для полной функциональности сайта включите JavaScript в вашем браузере') }}</p>
 </noscript>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateBalance() {
+            fetch('{{ route('user.balance') }}', {
+                method: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Content-Type': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.balance !== undefined) {
+                        document.getElementById('user-balance').innerText = data.balance + ' ₽';
+                    }
+                })
+                .catch(error => console.error('Ошибка при обновлении баланса:', error));
+        }
+
+        setInterval(updateBalance, 5000);
+    });
+</script>
 <script src="{{ asset('js/subscription.js') }}"></script>
 @yield('scripts')
 </body>
