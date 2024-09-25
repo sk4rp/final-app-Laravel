@@ -113,9 +113,19 @@ class OfferController extends Controller
      */
     public function listOffers(): Factory|\Illuminate\Foundation\Application|View|Application
     {
+        $webmasterId = auth()->id();
         $offers = Offer::query()->where('is_active', true)->get();
+
+        $offers->each(function ($offer) use ($webmasterId) {
+            $offer->trackingUrl = route('offer.track', [
+                'offer_id' => $offer->id,
+                'webmaster_id' => $webmasterId,
+            ]);
+        });
+
         return view('webmaster.offers.index', compact('offers'));
     }
+
 
     /**
      * @return Factory|\Illuminate\Foundation\Application|View|Application

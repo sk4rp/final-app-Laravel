@@ -17,8 +17,9 @@
             <div class="offer-item" data-offer-id="{{ $offer->id }}">
                 <strong>{{ $offer->name }}</strong><br>
                 {{ __('Стоимость клика:') }} {{ $offer->cost_per_click }} руб.<br>
-                <a href="{{ $offer->target_url }}"
-                   target="_blank"> {{ __('Ссылка на оффер') }}</a>
+                <p><strong>{{ __('Ваша ссылка для отправки трафика:') }}</strong>
+                    <a href="{{ $offer->trackingUrl }}" target="_blank">{{ $offer->trackingUrl }}</a>
+                </p>
             </div>
         @endforeach
     </div>
@@ -39,7 +40,9 @@
                             offerElement.innerHTML = `
                                 <strong>${offer.name}</strong><br>
                                 Стоимость клика: ${offer.cost_per_click} руб.<br>
-                                <a href="${offer.target_url}" target="_blank">Ссылка на оффер</a>
+                                <p><strong>Ваша ссылка для отправки трафика:</strong>
+                                    <a href="${offer.trackingUrl}" target="_blank">${offer.trackingUrl}</a>
+                                </p>
                             `;
                             offersContainer.appendChild(offerElement);
                         });
