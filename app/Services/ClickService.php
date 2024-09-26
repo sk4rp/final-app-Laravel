@@ -3,57 +3,74 @@
 namespace App\Services;
 
 use App\Enums\RoleEnum;
+use App\Exceptions\CalculationException;
 use App\Models\Click;
-use App\Models\Offer;
-use Exception;
+use App\Models\SiteIncome;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 
 class ClickService
 {
     /**
      * @param int $userId
-     * @return Collection|array
+     * @return Collection
      */
-    public function getUserClicks(int $userId): Collection|array
+    public function getUserClicks(int $userId): Collection
     {
-        return Click::query()->where('webmaster_id', $userId)->get();
+        return Click::query()
+            ->where('webmaster_id', $userId)
+            ->get();
     }
 
     /**
-     * @param int $offerId
-     * @param Request $request
-     * @return mixed
-     * @throws Exception
+     * @return int
      */
-    public function handleRedirect(int $offerId, Request $request): mixed
+    public function getCountClicks(): int
     {
-        $user = Auth::user();
+        return Click::query()->count();
+    }
 
-        if (!$user) {
-            throw new Exception('Access denied');
+    /**
+     * @param array $params
+     * @return Model|Builder
+     */
+    public function createClick(array $params): Model|Builder
+    {
+        return Click::query()->create($params);
+    }
+
+    /**
+     * @throws CalculationException
+     */
+    public function calculateClicks(mixed $offer, mixed $webmaster): void
+    {
+        try {
+            $clickPrice = $offer->cost_per_click;
+
+            $webmaster->balance += $clickPrice * 0.8;
+            $webmaster->save();
+
+            $advertiser = $offer->advertiser;
+            $advertiser->balance -= $clickPrice;
+            $advertiser->save();
+
+            $adminShare = $clickPrice * 0.2;
+            $admins = User::query()->where('role', RoleEnum::admin->value)->get();
+
+            foreach ($admins as $admin) {
+                $admin->balance += $adminShare;
+                $admin->save();
+            }
+
+            $siteIncomes = SiteIncome::query()->get();
+            foreach ($siteIncomes as $siteIncome) {
+                $siteIncome->total_income += $adminShare;
+                $siteIncome->save();
+            }
+        } catch (CalculationException $e) {
+            throw new CalculationException($e->getMessage());
         }
-
-        if ($user->role !== RoleEnum::admin->value && $user->role !== RoleEnum::webmaster->value) {
-            throw new Exception('Access denied');
-        }
-
-        $offer = Offer::query()->findOrFail($offerId);
-
-        $webmasterId = $user->getAuthIdentifier();
-
-        if (!$offer->subscriptions()->where('user_id', $webmasterId)->exists()) {
-            throw new Exception('Subscription not found');
-        }
-
-        Click::query()->create([
-            'offer_id' => $offerId,
-            'webmaster_id' => $webmasterId,
-            'client_ip' => $request->ip(),
-            'clicked_at' => now(),
-        ]);
-
-        return $offer->target_url;
     }
 }

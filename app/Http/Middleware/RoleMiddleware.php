@@ -13,10 +13,10 @@ class RoleMiddleware
      *
      * @param Request $request
      * @param Closure $next
-     * @param  string  $role
+     * @param string $role
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $role): mixed
+    public function handle(Request $request, Closure $next, string $role): mixed
     {
         if (!Auth::check() || Auth::user()->role !== $role) {
             return redirect('/');

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\AuthService;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -31,6 +32,8 @@ class RegisterController extends Controller
     public function register(Request $request): RedirectResponse
     {
         $user = $this->authService->registerUser($request);
+
+        /** @var User $user */
         auth()->login($user);
 
         return redirect()->route('home');

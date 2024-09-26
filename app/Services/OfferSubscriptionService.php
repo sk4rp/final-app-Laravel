@@ -7,16 +7,13 @@ use App\Models\OfferSubscription;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class OfferSubscriptionService
 {
     /**
-     * @return Builder[]|Collection
+     * @return Collection
      */
-    public function getAllSubscriptions(): Collection|array
+    public function getAllSubscriptions(): Collection
     {
         return OfferSubscription::with('offer')->get();
     }
@@ -31,10 +28,11 @@ class OfferSubscriptionService
 
     /**
      * @param int $subscriptionId
-     * @return Builder|array|Collection|Model
+     * @return Builder|Builder[]|Collection|Model|null
      */
-    public function getSubscriptionById(int $subscriptionId): Builder|array|Collection|Model
+    public function getSubscriptionById(int $subscriptionId): Model|Collection|Builder|array|null
     {
-        return OfferSubscription::query()->findOrFail($subscriptionId);
+        return OfferSubscription::query()
+            ->findOrFail($subscriptionId);
     }
 }

@@ -16,11 +16,18 @@ class LoginController extends Controller
     {
     }
 
+    /**
+     * @return View
+     */
     public function showLoginForm(): View
     {
         return view('auth.login');
     }
 
+    /**
+     * @param Request $request
+     * @return RedirectResponse
+     */
     public function login(Request $request): RedirectResponse
     {
         if ($this->authService->authenticateUser($request)) {
@@ -30,6 +37,9 @@ class LoginController extends Controller
         return redirect()->back()->withErrors(['email' => 'Неправильный email или пароль']);
     }
 
+    /**
+     * @return RedirectResponse
+     */
     public function logout(): RedirectResponse
     {
         $this->authService->logoutUser();

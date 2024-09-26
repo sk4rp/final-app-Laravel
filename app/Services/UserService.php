@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\RoleEnum;
+use App\Exceptions\UserException;
 use App\Models\Click;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -13,11 +14,27 @@ use Illuminate\Http\Request;
 class UserService
 {
     /**
-     * @return Collection|array
+     * @return Collection
      */
-    public function getAllUsers(): Collection|array
+    public function getAllUsers(): Collection
     {
         return User::query()->get();
+    }
+
+    /**
+     * @param int $webmasterId
+     * @return Model|Collection|Builder|array
+     * @throws UserException
+     */
+    public function findWebmasterById(int $webmasterId): Model|Collection|Builder|array
+    {
+        $webmaster = User::query()->find($webmasterId);
+
+        if (!$webmaster) {
+            throw new UserException('Webmaster not found');
+        }
+
+        return $webmaster;
     }
 
     /**

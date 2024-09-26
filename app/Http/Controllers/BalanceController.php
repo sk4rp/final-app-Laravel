@@ -2,20 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
+use App\Exceptions\UserException;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class BalanceController extends Controller
 {
     /**
-     * @return Factory|\Illuminate\Foundation\Application|View|Application
+     * @return View
      */
-    public function balance(): Factory|\Illuminate\Foundation\Application|View|Application
+    public function balance(): View
     {
         return view('advertiser.balance');
     }
@@ -23,6 +21,7 @@ class BalanceController extends Controller
     /**
      * @param Request $request
      * @return RedirectResponse
+     * @throws UserException
      */
     public function balanceStore(Request $request): RedirectResponse
     {
@@ -30,7 +29,11 @@ class BalanceController extends Controller
             'balance' => 'required|numeric|min:1|max:500000',
         ]);
 
-        $advertiser = Auth::user();
+        $advertiser = auth()->user();
+
+        if (!$advertiser) {
+            throw new UserException('User not found');
+        }
 
         $advertiser->balance += $request->input('balance');
         $advertiser->save();
@@ -38,6 +41,9 @@ class BalanceController extends Controller
         return redirect()->route('advertiser.balance')->with('success', __('Баланс успешно пополнен'));
     }
 
+    /**
+     * @return JsonResponse
+     */
     public function getBalance(): JsonResponse
     {
         $user = auth()->user();

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\OfferException;
+use App\Http\Requests\OfferRequest;
 use App\Models\Click;
 use App\Models\Offer;
-use App\Models\SiteIncome;
+use App\Services\ClickService;
 use App\Services\OfferService;
 use App\Services\UserService;
 use Carbon\Carbon;
@@ -16,8 +18,6 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 class OfferController extends Controller
@@ -25,65 +25,54 @@ class OfferController extends Controller
     public function __construct(
         protected readonly OfferService $offerService,
         protected readonly UserService  $userService,
+        protected readonly ClickService $clickService,
     )
     {
     }
 
-    public function index(): View|Factory|Application
+    /**
+     * @return View
+     */
+    public function index(): View
     {
         $offers = $this->offerService->getUserOffers(auth()->user()->id);
         return view('advertiser.offers.index', compact('offers'));
     }
 
-    public function create(): View|Factory|Application
+    /**
+     * @return View
+     */
+    public function create(): View
     {
         return view('advertiser.offers.create');
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(OfferRequest $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string',
-            'site_themes' => 'required',
-            'target_url' => 'required|url',
-            'cost_per_click' => 'required',
-        ]);
-
-        $advertiser = Auth::user();
-
-        $validated['advertiser_id'] = $advertiser->getAuthIdentifier();
-
-        $minTrafficCost = 100.00;
-
-        if ($advertiser->balance < $minTrafficCost) {
-            return redirect()->back()->withErrors(['message' => 'Недостаточно средств для размещения оффера']);
-        }
-
-        Offer::query()->create($validated);
-
+        $this->offerService->createOffer($request);
         return redirect()->route('advertiser.offers.index')->with('success', 'Оффер добавлен');
     }
 
     /**
      * @param Offer $offer
-     * @return View|\Illuminate\Foundation\Application|Factory|RedirectResponse|Application
+     * @return Application|Factory|View|\Illuminate\Foundation\Application|RedirectResponse
      */
-    public function edit(Offer $offer): View|\Illuminate\Foundation\Application|Factory|RedirectResponse|Application
+    public function edit(Offer $offer): Factory|View|\Illuminate\Foundation\Application|Application|RedirectResponse
     {
         try {
             $this->authorize('update', $offer);
             return view('advertiser.offers.edit', compact('offer'));
         } catch (AuthorizationException $e) {
-            return redirect()->back()->withErrors(['error' => 'У вас нет прав для редактирования данного оффера.']);
+            return redirect()->back()->withErrors(['error' => 'У вас нет прав для редактирования данного оффера']);
         } catch (Exception $e) {
-            return redirect()->back()->withErrors(['error' => 'Произошла ошибка при создании оффера. Убедитесь, что стоимость за клик не слишком велика.']);
+            return redirect()->back()->withErrors(['error' => 'Произошла ошибка при создании оффера. Убедитесь, что стоимость за клик не слишком велика']);
         }
     }
 
     /**
      * @throws AuthorizationException
      */
-    public function update(Request $request, Offer $offer): RedirectResponse
+    public function update(OfferRequest $request, Offer $offer): RedirectResponse
     {
         $this->authorize('update', $offer);
 
@@ -111,19 +100,11 @@ class OfferController extends Controller
 
     /**
      * @return Factory|\Illuminate\Foundation\Application|View|Application
+     * @throws OfferException
      */
     public function listOffers(): Factory|\Illuminate\Foundation\Application|View|Application
     {
-        $webmasterId = auth()->id();
-        $offers = Offer::query()->where('is_active', true)->get();
-
-        $offers->each(function ($offer) use ($webmasterId) {
-            $offer->trackingUrl = route('offer.track', [
-                'offer_id' => $offer->id,
-                'webmaster_id' => $webmasterId,
-            ]);
-        });
-
+        $offers = $this->offerService->getListOffers();
         return view('webmaster.offers.index', compact('offers'));
     }
 
@@ -137,35 +118,22 @@ class OfferController extends Controller
         return view('advertiser.offers.all', compact('offers'));
     }
 
+    /**
+     * @return JsonResponse
+     */
     public function getStatistics(): JsonResponse
     {
-        $today = now()->format('Y-m-d');
-        $startOfDay = "{$today} 00:00:00";
-        $endOfDay = "{$today} 23:59:59";
-
-        $clicksQuery = Click::query()->whereBetween('clicked_at', [$startOfDay, $endOfDay]);
-
-        $totalLinks = Offer::query()->distinct('target_url')->count('target_url');
-        $totalClicks = $clicksQuery->count();
-        $totalOffers = Offer::query()->count();
-
-        return response()->json([
-            'totalLinks' => $totalLinks,
-            'totalClicks' => $totalClicks,
-            'totalOffers' => $totalOffers,
-        ]);
+        return $this->offerService->getStatisticJson();
     }
-
 
     /**
      * @return View
      */
     public function stats(): View
     {
-        $totalLinks = Offer::query()->distinct('target_url')->count('target_url');
-        $totalClicks = Click::query()->count();
-        $totalOffers = Offer::query()->count();
-
+        $totalLinks = $this->offerService->getTargetUrlCountFromOffers();
+        $totalClicks = $this->clickService->getCountClicks();
+        $totalOffers = $this->offerService->getOffersCount();
         return view('webmaster.dashboard', compact('totalLinks', 'totalClicks', 'totalOffers'));
     }
 
@@ -178,9 +146,7 @@ class OfferController extends Controller
         $offers = $advertiser->offers;
 
         $totalClicks = Click::query()->whereIn('offer_id', $offers->pluck('id'))->count();
-
         $totalLinks = $offers->pluck('target_url')->unique()->count();
-
         $totalOffers = $offers->count();
 
         $clickDates = Click::query()
@@ -258,44 +224,5 @@ class OfferController extends Controller
         $offer->update(['is_active' => false]);
 
         return response()->json(['success' => true]);
-    }
-
-    /**
-     * @param int $offerId
-     * @return JsonResponse|RedirectResponse
-     */
-    public function processClick(int $offerId): JsonResponse|RedirectResponse // TODO: надо доделать
-    {
-        $offer = Offer::query()->find($offerId);
-
-        if (!$offer) {
-            return response()->json(['error' => 'Оффер не найден'], 404);
-        }
-
-        $webmasters = $offer->subscriptions()->with('webmaster')->get();
-
-        // Предполагается, что вы работаете с первым веб-мастером
-        if ($webmasters->isEmpty()) {
-            return response()->json(['error' => 'Веб-мастера не найдены'], 404);
-        }
-
-        $webmaster = $webmasters->first()->webmaster;
-
-        $advertiser = $offer->advertiser;
-        $siteIncome = SiteIncome::query()->first();
-
-        $clickCost = $offer->cost_per_click;
-        $webmasterShare = 0.8 * $clickCost;
-        $siteShare = 0.2 * $clickCost;
-
-        if ($advertiser->balance >= $clickCost) {
-            $advertiser->updateBalance(-$clickCost);
-            $webmaster->updateBalance($webmasterShare);
-            $siteIncome?->addIncome($siteShare);
-
-            return redirect()->to($offer->target_url);
-        }
-
-        return response()->json(['error' => 'Недостаточно средств у рекламодателя'], 400);
     }
 }
